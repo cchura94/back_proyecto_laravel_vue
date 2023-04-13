@@ -1,0 +1,27 @@
+### Registro de Usuario
+POST http://127.0.0.1:8000/api/v1/auth/register
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "admin",
+    "email": "admin@mail.com",
+    "password": "admin54321",
+    "cpassword": "admin54321"
+}
+
+### Login
+POST http://127.0.0.1:8000/api/v1/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "admin@mail.com",
+    "password": "admin54321"
+    
+}
+
+### Perfil
+GET http://127.0.0.1:8000/api/v1/auth/perfil
+Accept: application/json
+Authorization: Bearer 4|Yj7c3KNZ42lbIOuTCifYyDDj3yGjuaRhUESOoXJo
