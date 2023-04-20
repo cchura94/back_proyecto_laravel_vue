@@ -5,6 +5,11 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Controllers\CategoriaController;
+use App\Controllers\ProductoController;
+use App\Controllers\ClienteController;
+use App\Controllers\PedidoController;
+
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -29,5 +34,9 @@ Route::middleware("auth:sanctum")->group(function(){
     Route::post("user/{id}/update-password", [UserController::class, "updatePassword"]);
 
     Route::apiResource("user", UserController::class);
+    Route::apiresouce("categoria", CategoriaController::class);
+    Route::apiresouce("producto", ProductoController::class);
+    Route::apiresouce("cliente", ClienteController::class);
+    Route::apiresouce("pedido", PedidoController::class);
 
 });
