@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string("nombre", 200);
+            $table->decimal("precio", 10, 2);
+            $table->integer("cantidad")->default(0);
+            $table->string("imagen");
+            $table->text("descripcion")->nullable();
+            // N:1
+            $table->bigInteger("categoria_id")->unsigned();
+            $table->foreign("categoria_id")->references("id")->on("categorias");
+
+            $table->softDeletes(); // deleted_at
+            $table->timestamps(); // created_at, updated_at
         });
     }
 

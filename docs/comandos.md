@@ -7,6 +7,10 @@ php artisan make:model Producto -m
 php artisan make:model Cliente -m
 php artisan make:model Pedido -m
 php artisan make:migration create_pedido_producto_table
+php artisan make:model Permiso -m
+php artisan make:model Role -m
+php artisan make:migration create_role_user_table
+php artisan make:migration create_permiso_role_table
 ```
 2. Generar los controladores API
 ```
@@ -24,10 +28,10 @@ use App\Controllers\ProductoController;
 use App\Controllers\ClienteController;
 use App\Controllers\PedidoController;
 
-Route::apiresouce("categoria", CategoriaController::class);
-Route::apiresouce("producto", ProductoController::class);
-Route::apiresouce("cliente", ClienteController::class);
-Route::apiresouce("pedido", PedidoController::class);
+Route::apiResource("categoria", CategoriaController::class);
+Route::apiResource("producto", ProductoController::class);
+Route::apiResource("cliente", ClienteController::class);
+Route::apiResource("pedido", PedidoController::class);
 
 ```
 4. Trabajar en la logica de negocios

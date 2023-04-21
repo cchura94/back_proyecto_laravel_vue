@@ -28,15 +28,15 @@ Route::prefix("/v1/auth")->group(function(){
 });
 
 // Crud Api Usuarios
-Route::middleware("auth:sanctum")->group(function(){
+Route::middleware("auth:sanctum")->group(function() {
 
     // actualizacion de contraseña
     Route::post("user/{id}/update-password", [UserController::class, "updatePassword"]);
 
     Route::apiResource("user", UserController::class);
-    Route::apiresouce("categoria", CategoriaController::class);
-    Route::apiresouce("producto", ProductoController::class);
-    Route::apiresouce("cliente", ClienteController::class);
-    Route::apiresouce("pedido", PedidoController::class);
+    Route::apiResource("categoria", CategoriaController::class);
+    Route::apiResource("producto", ProductoController::class);
+    Route::apiResource("cliente", ClienteController::class);
+    Route::apiResource("pedido", PedidoController::class);
 
 });
