@@ -5,11 +5,10 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Controllers\CategoriaController;
-use App\Controllers\ProductoController;
-use App\Controllers\ClienteController;
-use App\Controllers\PedidoController;
-
+use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\ProductoController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

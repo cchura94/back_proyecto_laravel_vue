@@ -30,7 +30,24 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // validacion
+        $request->validate([
+            "nombre" => "required",
+            "categoria_id" => "required"
+        ]);
+
+        // guardar en la BD
+        $prod = new Producto();
+        $prod->nombre = $request->nombre;
+        $prod->precio = $request->precio;
+        $prod->cantidad = $request->cantidad;
+        $prod->categoria_id = $request->categoria_id;
+        $prod->imagen = "-";
+        $prod->descripcion = $request->descripcion;
+        $prod->save();
+        
+        // return
+        return response()->json(["message" => "Producto Registrado"], 201); 
     }
 
     /**
@@ -38,7 +55,9 @@ class ProductoController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $prod = Producto::findOrFail($id);
+
+        return response()->json($prod, 200); 
     }
 
     /**
@@ -46,7 +65,22 @@ class ProductoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            "nombre" => "required",
+            "categoria_id" => "required"
+        ]);
+        
+        // guardar en la BD
+        $prod = Producto::findOrFail($id);
+        $prod->nombre = $request->nombre;
+        $prod->precio = $request->precio;
+        $prod->cantidad = $request->cantidad;
+        $prod->categoria_id = $request->categoria_id;
+        $prod->descripcion = $request->descripcion;
+        $prod->update();
+        
+        // return
+        return response()->json(["message" => "Producto Actualizado"], 201); 
     }
 
     /**
@@ -54,6 +88,8 @@ class ProductoController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $prod = Producto::findOrFail($id);
+        $prod->delete();
+        return response()->json(["message" => "Producto Eliminado"], 200);
     }
 }
