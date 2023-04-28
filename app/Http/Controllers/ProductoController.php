@@ -16,10 +16,11 @@ class ProductoController extends Controller
         $limit = isset($request->limit)?$request->limit:10;
         if($request->q){
             $productos = Producto::where('nombre', 'like', "%".$request->q. "%")
-                        ->orderBy('id', 'desc')                   
+                        ->orderBy('id', 'desc') 
+                        ->with('categoria')                 
                         ->paginate($limit);
         }else{
-            $productos = Producto::orderBy('id', 'desc')->paginate($limit);            
+            $productos = Producto::orderBy('id', 'desc')->with('categoria')->paginate($limit);            
         }
 
         return response()->json($productos);
@@ -91,5 +92,25 @@ class ProductoController extends Controller
         $prod = Producto::findOrFail($id);
         $prod->delete();
         return response()->json(["message" => "Producto Eliminado"], 200);
+    }
+
+    public function actualizarImagen(Request $request, $id)
+    {
+        if($file = $request->file("imagen")){
+            $direccion_imagen =  time(). "-". $file->getClientOriginalName();
+            $file->move("imagen/", $direccion_imagen);
+
+            $direccion_imagen = "imagen/".$direccion_imagen;
+
+            $producto = Producto::findOrFail($id);
+            $producto->imagen = $direccion_imagen;
+            $producto->update();
+
+            return response()->json(["message" => "Imagen actualizada"], 200);
+
+        }
+        return response()->json(["message" => "Se requiere Imagen"], 422);
+            
+
     }
 }

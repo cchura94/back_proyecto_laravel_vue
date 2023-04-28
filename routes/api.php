@@ -31,6 +31,8 @@ Route::middleware("auth:sanctum")->group(function() {
 
     // actualizacion de contraseña
     Route::post("user/{id}/update-password", [UserController::class, "updatePassword"]);
+    // actualizar imagen
+    Route::post("producto/{id}/update-image", [ProductoController::class, "actualizarImagen"]);
 
     Route::apiResource("user", UserController::class);
     Route::apiResource("categoria", CategoriaController::class);
