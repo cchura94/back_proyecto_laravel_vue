@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pedido;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PedidoController extends Controller
 {
@@ -11,7 +14,8 @@ class PedidoController extends Controller
      */
     public function index()
     {
-        //
+        $pedidos = Pedido::orderBy('id', "desc")->paginate(10);
+        return response()->json($pedidos, 200);
     }
 
     /**
@@ -19,7 +23,48 @@ class PedidoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*
+        {
+            "cliente_id": 1,
+            "productos": [
+                {producto_id: 1, cantidad: 1},
+                {producto_id: 4, cantidad: 3}
+            ]
+        }
+        */
+        $request->validate([
+            "cliente_id" => "required",
+            "productos" => "required"
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $pedido = new Pedido();
+            $pedido->cliente_id = $request->cliente_id;
+            $pedido->fecha = date('Y-m-d H:i:s');
+            $pedido->save();
+
+            foreach ($request->productos as $obj) {
+                $producto_id = $obj["id"];
+                $cantidad = $obj["cantidad"];
+
+                $pedido->productos()->attach($producto_id, ["cantidad" => $cantidad]);
+            }
+
+            $pedido->estado = 2;
+            $pedido->observaciones = $request->observaciones;
+            $pedido->user_id = Auth::id();
+            $pedido->update();
+
+            DB::commit();
+            // all good
+            return response()->json(["message" => "Pedido Registrado"], 201);
+        } catch (\Exception $e) {
+            DB::rollback();
+            // something went wrong
+            return response()->json(["message" => "Error al registrar el Pedido"], 422);
+        }
     }
 
     /**
