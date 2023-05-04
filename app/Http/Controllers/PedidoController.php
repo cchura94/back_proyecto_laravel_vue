@@ -14,7 +14,9 @@ class PedidoController extends Controller
      */
     public function index()
     {
-        $pedidos = Pedido::orderBy('id', "desc")->paginate(10);
+        $pedidos = Pedido::orderBy('id', "desc")
+                            ->with('productos', 'cliente')
+                            ->paginate(10);
         return response()->json($pedidos, 200);
     }
 
@@ -43,6 +45,7 @@ class PedidoController extends Controller
             $pedido = new Pedido();
             $pedido->cliente_id = $request->cliente_id;
             $pedido->fecha = date('Y-m-d H:i:s');
+            $pedido->user_id = Auth::id();
             $pedido->save();
 
             foreach ($request->productos as $obj) {
@@ -54,7 +57,6 @@ class PedidoController extends Controller
 
             $pedido->estado = 2;
             $pedido->observaciones = $request->observaciones;
-            $pedido->user_id = Auth::id();
             $pedido->update();
 
             DB::commit();
@@ -63,7 +65,7 @@ class PedidoController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             // something went wrong
-            return response()->json(["message" => "Error al registrar el Pedido"], 422);
+            return response()->json(["message" => "Error al registrar el Pedido", "error" => $e], 422);
         }
     }
 
