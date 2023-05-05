@@ -9,6 +9,8 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ProductoController;
+use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -34,10 +36,48 @@ Route::middleware("auth:sanctum")->group(function() {
     // actualizar imagen
     Route::post("producto/{id}/update-image", [ProductoController::class, "actualizarImagen"]);
 
+    // enviar correo
+    Route::get("/pedido/{id}/enviar-email", [PedidoController::class, "enviarFacturaCorreo"]);
+
     Route::apiResource("user", UserController::class);
     Route::apiResource("categoria", CategoriaController::class);
     Route::apiResource("producto", ProductoController::class);
     Route::apiResource("cliente", ClienteController::class);
     Route::apiResource("pedido", PedidoController::class);
+ 
+});
+Route::get("correo", function(){
+    $asunto = "Asunto de PRUEBA para juan";
+    $for = "juan.abc@gmail.com";
+    Mail::send('templatecorreo', ["mensaje" => "Hola"], function($msg) use ($asunto, $for) {
+        $msg->from("ventas@empresa.com", "Ventas");
+        $msg->subject($asunto);
+        $msg->to($for);
+    });
+
+    return response()->json(["message" => "Correo enviado"]);
+});
+
+Route::get("categoria-xml", function(){
+    $users = User::all();
+    $response = '<?xml version="1.0" encoding="UTF-8"?>';
+    $response .= '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">';
+    $response .= '<soap:Body>';
+    foreach ($users as $user) {
+        $response .= '<user>';
+        $response .= '<id>'.$user->id.'</id>';
+        $response .= '<nombre>'.$user->name.'</nombre>';
+        $response .= '<email>'.$user->email.'</email>';
+        $response .= '</user>';
+    }
+
+    $response .= '</soap:Body>';
+    $response .= '</soap:Envelope>';
+
+    header("Content-Type: text/xml; charset=UTF-8");
+    
+    return response($response, 200, [
+        'Content-Type' => 'application/xml'
+    ]);
 
 });

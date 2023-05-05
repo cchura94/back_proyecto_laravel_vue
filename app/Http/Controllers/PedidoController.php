@@ -6,6 +6,7 @@ use App\Models\Pedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class PedidoController extends Controller
 {
@@ -67,6 +68,29 @@ class PedidoController extends Controller
             // something went wrong
             return response()->json(["message" => "Error al registrar el Pedido", "error" => $e], 422);
         }
+    }
+
+    public function enviarFacturaCorreo($id, Request $request)
+    {
+        $pedido = Pedido::with(["cliente", "productos"])->find($id);
+        
+        $asunto = "Recibo de Pedido: $pedido->id ";
+
+        
+        $for = $pedido->cliente->correo;
+        if(isset($for)){
+
+            Mail::send('recibo', ["pedido" => $pedido], function($msg) use ($asunto, $for) {
+                $msg->from("ventas@empresa.com", "Ventas");
+                $msg->subject($asunto);
+                $msg->to($for);
+            });    
+            return response()->json(["message" => "Correo enviado"]);        
+        }else{
+
+            return response()->json(["message" => "No se envio el correo"]);
+        }
+
     }
 
     /**
